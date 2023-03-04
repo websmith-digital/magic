@@ -1,114 +1,54 @@
-// const Webflow = Webflow || [];
-// Webflow.push(function () {
-//     // unbind webflow form handling (keep this if you only want to affect specific forms)
-//     $(document).off("submit");
+var Webflow = Webflow || [];
+Webflow.push(function () {
+    // unbind webflow form handling (keep this if you only want to affect specific forms)
+    $(document).off("submit");
 
-//     /* Any form on the page */
-//     $("form").submit(function (e) {
-//         e.preventDefault();
+    /* Any form on the page */
+    $("form").submit(function (e) {
+        e.preventDefault();
 
-//         const $form = $(this); // The submitted form
-//         const $submit = $("[type=submit]", $form); // Submit button of form
-//         const buttonText = $submit.val(); // Original button text
-//         const buttonWaitingText = $submit.attr("data-wait"); // Waiting button text value
-//         const formMethod = $form.attr("method"); // Form method (where it submits to)
-//         const formAction = $form.attr("action"); // Form action (GET/POST)
-//         const formRedirect = $form.attr("data-redirect"); // Form redirect location
-//         const formData = $form.serialize(); // Form data
+        const $form = $(this); // The submitted form
+        const $submit = $("[type=submit]", $form); // Submit button of form
+        const buttonText = $submit.val(); // Original button text
+        const buttonWaitingText = $submit.attr("data-wait"); // Waiting button text value
+        const formMethod = $form.attr("method"); // Form method (where it submits to)
+        const formAction = $form.attr("action"); // Form action (GET/POST)
+        const formRedirect = $form.attr("data-redirect"); // Form redirect location
+        const formData = $form.serialize(); // Form data
 
-//         // Set waiting text
-//         if (buttonWaitingText) {
-//             $submit.val(buttonWaitingText);
-//         }
+        // Set waiting text
+        if (buttonWaitingText) {
+            $submit.val(buttonWaitingText);
+        }
 
-//         $.ajax(formAction, {
-//             data: formData,
-//             method: formMethod,
-//         })
-//             .done(res => {
-//                 // If form redirect setting set, then use this and prevent any other actions
-//                 if (formRedirect) {
-//                     window.location = formRedirect;
-//                     return;
-//                 }
+        $.ajax(formAction, {
+            data: formData,
+            method: formMethod,
+        })
+            .done(res => {
+                // If form redirect setting set, then use this and prevent any other actions
+                if (formRedirect) {
+                    window.location = formRedirect;
+                    return;
+                }
 
-//                 $form
-//                     .hide() // optional hiding of form
-//                     .siblings(".w-form-done")
-//                     .show() // Show success
-//                     .siblings(".w-form-fail")
-//                     .hide(); // Hide failure
-//             })
-//             .fail(res => {
-//                 $form
-//                     .siblings(".w-form-done")
-//                     .hide() // Hide success
-//                     .siblings(".w-form-fail")
-//                     .show(); // show failure
-//             })
-//             .always(() => {
-//                 // Reset text
-//                 $submit.val(buttonText);
-//             });
-//     });
-// });
-
-makeWebflowFormAjax($("[ws-form-submit=true]"));
-
-makeWebflowFormAjax = function (forms, successCallback, errorCallback) {
-    forms.each(function () {
-        var form = $(this);
-        form.on("submit", function () {
-            var container = form.parent();
-            var doneBlock = $(".w-form-done", container);
-            var failBlock = $(".w-form-fail", container);
-
-            var action = form.attr("action");
-            var method = form.attr("method");
-            var data = form.serialize();
-
-            // call via ajax
-            $.ajax({
-                type: method,
-                url: action,
-                data: data,
-                success: function (resultData) {
-                    if (typeof successCallback === "function") {
-                        // call custom callback
-                        result = successCallback(resultData);
-                        if (!result) {
-                            // show error (fail) block
-                            form.show();
-                            doneBlock.hide();
-                            failBlock.show();
-                            console.log(e);
-
-                            return;
-                        }
-                    }
-
-                    // show success (done) block
-                    form.hide();
-                    doneBlock.show();
-                    failBlock.hide();
-                },
-
-                error: function (e) {
-                    // call custom callback
-                    if (typeof errorCallback === "function") {
-                        errorCallback(e);
-                    }
-
-                    // show error (fail) block
-                    form.show();
-                    doneBlock.hide();
-                    failBlock.show();
-                    console.log(e);
-                },
+                $form
+                    .hide() // optional hiding of form
+                    .siblings(".w-form-done")
+                    .show() // Show success
+                    .siblings(".w-form-fail")
+                    .hide(); // Hide failure
+            })
+            .fail(res => {
+                $form
+                    .siblings(".w-form-done")
+                    .hide() // Hide success
+                    .siblings(".w-form-fail")
+                    .show(); // show failure
+            })
+            .always(() => {
+                // Reset text
+                $submit.val(buttonText);
             });
-
-            // prevent default webdlow action
-            return false;
-        });
     });
-};
+});
